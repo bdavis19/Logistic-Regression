@@ -124,5 +124,13 @@ everwk.mod.tab[, "Estimate"] <- exp(coef(everwk.mod))
 everwk.mod.tab
 
 # Predict!
-testPrediction <- predict(everwk.mod, type="response", newdata=NH11)
-table(NH11$everwrk, testPrediction >= 0.5)
+predictEverWorked <- with(NH11,
+               expand.grid(age_p = c(38), 
+                           r_maritl = unique(NH11$r_maritl)))
+# Predict everwrk at those levels
+cbind(predictEverWorked, predict(everwk.mod, type = "response",
+                      se.fit = TRUE, interval="confidence",
+                      newdata = predictEverWorked))
+
+testPrediction <- predict(everwk.mod, type="response", newdata=NH11, se.fit=TRUE, interval="confidence")
+plot(allEffects(everwk.mod))
